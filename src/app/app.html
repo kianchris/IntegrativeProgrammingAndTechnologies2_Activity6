@@ -1,0 +1,83 @@
+<div class="page">
+  <div class="card">
+
+    <h2 *ngIf="isLogin">Login</h2>
+    <h2 *ngIf="!isLogin">Register</h2>
+
+    <div *ngIf="isLogin">
+
+      <div class="input-group">
+        <label>Email</label>
+        <input [value]="email" (input)="onEmailChange($event)" type="email">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input [value]="password" (input)="onPasswordChange($event)" type="password">
+      </div>
+
+      <button (click)="Validate()">Sign In</button>
+
+      <p class="switch">
+        No account? 
+        <span (click)="switchForm()">Register</span>
+      </p>
+
+    </div>
+
+    <div *ngIf="!isLogin">
+
+      <div class="input-group">
+        <label>Email</label>
+        <input [value]="regEmail" (input)="onRegEmailChange($event)" type="email">
+      </div>
+      <div class="input-group">
+        <label>username</label>
+        <input [value]="usernameReg" (input)="onUsernameRegChange($event)" type="text">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input [value]="regPassword" (input)="onRegPasswordChange($event)" type="password">
+      </div>
+
+      <div class="input-group">
+        <label>Role</label>
+        <select [value]="role" (change)="onRoleChange($event)">
+          <option value="student">Student</option>
+          <option value="instructor">Instructor</option>
+        </select>
+      </div>
+
+      <button (click)="register()">Register</button>
+
+      <p class="switch">
+        Already have an account?
+        <span (click)="switchForm()">Login</span>
+      </p>
+
+      <div *ngIf="hasValidated" class="table-wrapper">
+        <h3 class="table-title">Registered Accounts</h3>
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let users of newuserList">
+              <td>{{users.username}}</td>
+              <td>{{users.email}}</td>
+              <td>{{users.role === 'student' ? 'Student' : 'Instructor'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="message">{{message}}</p>
+
+  </div>
+</div>

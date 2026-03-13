@@ -1,0 +1,133 @@
+import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { usersModel } from './Models/usersModel';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './app.html',
+  styleUrls: ['./app.css']
+})
+export class App {
+
+  protected readonly title = signal('login');
+
+  isLogin: boolean = true;
+
+  email: string = '';
+  password: string = '';
+  usernameReg: string = '';
+  emailReg: string = '';
+
+  regEmail: string = '';
+  regPassword: string = '';
+  role: 'student' | 'instructor' = 'student';
+
+  message: string = '';
+
+  students: usersModel[] = [];
+  instructors: usersModel[] = [];
+  newuserList: usersModel[] = [];
+  hasValidated: boolean = false;
+
+  switchForm(){
+    this.isLogin = !this.isLogin;
+    this.message = '';
+  }
+
+  register(){
+    if (!this.regEmail || !this.regPassword || !this.usernameReg){
+      this.message = "Fill all fields.";
+      return;
+    }
+    this.hasValidated = true;
+    this.message = "Registration successful";
+    this.loadTableValues();
+  }
+
+  Validate(){
+    if(!this.email && !this.password){
+      this.message = "Empty email and password";
+      return;
+    }
+    if(!this.email){
+      this.message = "Empty email";
+      return;
+    }
+    if(!this.password){
+      this.message = "Empty password";
+      return;
+    }
+    const student = this.students.find(
+      u => u.email === this.email && u.password === this.password
+    );
+    const instructor = this.instructors.find(
+      u => u.email === this.email && u.password === this.password
+    );
+    if(student){
+      this.message = "Logged in as Student";
+    }
+    else if(instructor){
+      this.message = "Logged in as Instructor";
+    }
+    else{
+      this.message = "Invalid credentials";
+    }
+  }
+  loadTableValues(){
+    const newUser: usersModel = {
+      username: this.usernameReg,
+      email: this.regEmail,
+      password: this.regPassword,
+      role: this.role
+    }
+    this.newuserList.push(newUser);
+
+    if (this.role === 'student') {
+      this.students.push(newUser);
+    } else if (this.role === 'instructor') {
+      this.instructors.push(newUser);
+    }
+
+    this.usernameReg = '';
+    this.regEmail = '';
+    this.regPassword = '';
+  }
+
+  onEmailChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+    this.email = target.value;
+  }
+
+  onPasswordChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+    this.password = target.value;
+  }
+
+  onRegEmailChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+    this.regEmail = target.value;
+  }
+
+  onUsernameRegChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+    this.usernameReg = target.value;
+  }
+
+  onRegPasswordChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) return;
+    this.regPassword = target.value;
+  }
+
+  onRoleChange(event: Event): void {
+    const target = event.target as HTMLSelectElement | null;
+    if (!target) return;
+    this.role = target.value as 'student' | 'instructor';
+  }
+}
