@@ -8,12 +8,24 @@
 
       <div class="input-group">
         <label>Email</label>
-        <input [value]="email" (input)="onEmailChange($event)" type="email">
+        <input
+          [value]="email"
+          (input)="onEmailChange($event)"
+          type="email"
+          [class.invalid]="loginAttempted && !!loginErrors.email"
+        >
+        <div class="field-error" *ngIf="loginAttempted && loginErrors.email">{{loginErrors.email}}</div>
       </div>
 
       <div class="input-group">
         <label>Password</label>
-        <input [value]="password" (input)="onPasswordChange($event)" type="password">
+        <input
+          [value]="password"
+          (input)="onPasswordChange($event)"
+          type="password"
+          [class.invalid]="loginAttempted && !!loginErrors.password"
+        >
+        <div class="field-error" *ngIf="loginAttempted && loginErrors.password">{{loginErrors.password}}</div>
       </div>
 
       <button (click)="Validate()">Sign In</button>
@@ -29,51 +41,98 @@
 
       <div class="input-group">
         <label>Email</label>
-        <input [value]="regEmail" (input)="onRegEmailChange($event)" type="email">
+        <input
+          [value]="regEmail"
+          (input)="onRegEmailChange($event)"
+          type="email"
+          [disabled]="isEditing"
+          [class.invalid]="registerAttempted && !!registerErrors.email"
+        >
+        <div class="field-error" *ngIf="registerAttempted && registerErrors.email">{{registerErrors.email}}</div>
       </div>
       <div class="input-group">
         <label>username</label>
-        <input [value]="usernameReg" (input)="onUsernameRegChange($event)" type="text">
+        <input
+          [value]="usernameReg"
+          (input)="onUsernameRegChange($event)"
+          type="text"
+          [class.invalid]="registerAttempted && !!registerErrors.username"
+        >
+        <div class="field-error" *ngIf="registerAttempted && registerErrors.username">{{registerErrors.username}}</div>
       </div>
 
       <div class="input-group">
         <label>Password</label>
-        <input [value]="regPassword" (input)="onRegPasswordChange($event)" type="password">
+        <input
+          [value]="regPassword"
+          (input)="onRegPasswordChange($event)"
+          type="password"
+          [class.invalid]="registerAttempted && !!registerErrors.password"
+        >
+        <div class="field-error" *ngIf="registerAttempted && registerErrors.password">{{registerErrors.password}}</div>
       </div>
 
       <div class="input-group">
         <label>Role</label>
-        <select [value]="role" (change)="onRoleChange($event)">
+        <select
+          [value]="role"
+          (change)="onRoleChange($event)"
+          [class.invalid]="registerAttempted && !!registerErrors.role"
+        >
           <option value="student">Student</option>
           <option value="instructor">Instructor</option>
         </select>
+        <div class="field-error" *ngIf="registerAttempted && registerErrors.role">{{registerErrors.role}}</div>
       </div>
 
-      <button (click)="register()">Register</button>
+      <button (click)="register()">{{ isEditing ? 'Update' : 'Register' }}</button>
+      <button *ngIf="isEditing" class="secondary-btn" (click)="cancelEdit()">Cancel</button>
 
       <p class="switch">
         Already have an account?
         <span (click)="switchForm()">Login</span>
       </p>
 
-      <div *ngIf="hasValidated" class="table-wrapper">
-        <h3 class="table-title">Registered Accounts</h3>
-        <table class="user-table">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let users of newuserList">
-              <td>{{users.username}}</td>
-              <td>{{users.email}}</td>
-              <td>{{users.role === 'student' ? 'Student' : 'Instructor'}}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-panel">
+        <div class="table-panel-header">
+          <h3 class="table-title">Registered Accounts</h3>
+          <div class="table-controls">
+            <input
+              class="search-input"
+              type="text"
+              placeholder="Search by name, email, or role..."
+              [value]="searchQuery"
+              (input)="onSearchChange($event)"
+            >
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredUserList">
+                <td>{{user.username}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.role === 'student' ? 'Student' : 'Instructor'}}</td>
+                <td class="table-actions">
+                  <button class="action-btn edit-btn" (click)="startEdit(user)">Edit</button>
+                  <button class="action-btn delete-btn" (click)="deleteUser(user.email)">Delete</button>
+                </td>
+              </tr>
+              <tr *ngIf="filteredUserList.length === 0">
+                <td colspan="4" class="empty-state">No users found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
